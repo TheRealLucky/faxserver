@@ -1,7 +1,9 @@
 package main
 
-import "fmt"
+import (
+	log "../../pkg/logger"
+)
 
 func main() {
-	fmt.Println("Hello World!")
+	log.Info("starting application")
 }
