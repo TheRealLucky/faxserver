@@ -1,0 +1,22 @@
+---
+## configuration
+
+## in seconds
+interval: 120
+
+## amount of mailboxes
+mailboxes: 10
+
+## if true, store files in the filesystem
+debug: true
+
+## amount of parallel goroutines
+maxRoutines: 5
+
+## information for database connection
+database:
+  host: 217.74.10.212
+  port: 5432
+  user: postgres
+  password: qwer%1234
+  dbname: postgres
