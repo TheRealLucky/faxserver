@@ -2,6 +2,7 @@ package mailer
 
 import (
 	"crypto/tls"
+	"fmt"
 	"github.com/pkg/errors"
 	"io"
 	"io/ioutil"
@@ -105,11 +106,11 @@ func Get_emails(acc loader.Account_Informations) (string, []string, error) {
 
 	for msg := range messages {
 		if msg == nil {
-			//Log.Fatal("[get_emails] Server didn't returned message")
+			Log.Fatal("[get_emails] Server didn't returned message")
 		}
 		r := msg.GetBody(&section)
 		if r == nil {
-			//Log.Fatal("[get_emails] Server didn't returned message body")
+			Log.Fatal("[get_emails] Server didn't returned message body")
 		}
 
 		//set charset var from the go-message package to support more charsets
@@ -231,7 +232,12 @@ func Get_emails(acc loader.Account_Informations) (string, []string, error) {
 			}
 
 		}
-		//--
+		//delete tmp files (from create_pdf)
+		err = delete_paths(files_to_delete)
+		if err != nil {
+			return "", nil, errors.Errorf("[get_mails] failed to delte file; \n%v", err)
+		}
+
 
 	}
 	return tif_file, fax_numbers, nil
@@ -246,4 +252,16 @@ func check_if_authorized(str string, wish_sender string) bool {
 		}
 	}
 	return false
+}
+
+//delete files from path
+func delete_paths(paths []string) error {
+	for i := 0; i < len(paths); i++ {
+		err := os.Remove(paths[i])
+		if err != nil {
+			return errors.Errorf("[delete_paths] failed to delete file: \n%v", err)
+		}
+		fmt.Println("is deleted: ", paths[i])
+	}
+	return nil
 }
