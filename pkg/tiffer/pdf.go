@@ -95,8 +95,9 @@ func Create_pdf(informations map[string]string, host string, user string) ([]str
 	return result, nil
 }
 
-
+//INFO: function is tested on linux
 //merge created pdf with attachments from mail and create a new one
+//key in map is used as paht and contains all associated files in this path as value
 func Merge_pdf(filenames map[string][]string) (string, error) {
 	command := ""
 	tmppath := ""

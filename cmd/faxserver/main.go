@@ -41,4 +41,18 @@ func main() {
 	}
 	fmt.Println(file)
 
+
+	//testcode on linux
+	/*
+	ka := make(map[string][]string)
+	t := make([]string,1)
+	l := make([]string,1)
+	t = append(t,"d8a9bea9-640d-423e-5de0-f6f517d1d529.pdf")
+	t = append(t, "f3d72fa4-9584-486c-4877-133980b81860.pdf")
+	l = append(l, "dummy.pdf","sample.pdf")
+	ka["./debug/mailboxes/x/u/2020-01-02"]= t
+	//ka["./testlogos/"] = l
+	_, err = tiffer.Merge_pdf(ka)
+	if err != nil {   fmt.Println(err)}*/
+
 }
