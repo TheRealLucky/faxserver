@@ -1,4 +1,4 @@
-package faxserver
+package main
 
 import "fmt"
 
