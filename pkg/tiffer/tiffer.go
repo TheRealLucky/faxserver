@@ -27,7 +27,7 @@ func Create_folder(host string, user string) string {
 }
 
 //create tif file from pdf
-func create_tif(path string) (string, error) {
+func Create_tif(path string) (string, error) {
 	//TODO: -g paramter
 	//a := 8.3 * 204
 	//b := 11.7 * 196
