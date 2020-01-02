@@ -7,13 +7,14 @@ import (
 	"github.com/jung-kurt/gofpdf"
 	"log"
 	"os/exec"
+	loader "../loader"
 )
 
 //create pdf from received email content
-func Create_pdf(informations map[string]string, host string, user string) ([]string, error) {
+func Create_pdf(informations map[string]string, acc loader.Account_Informations) ([]string, error) {
 	var err error
 	var file_path string
-	file_path = Create_folder(host, user)
+	file_path = Create_folder(acc.Fax_email_connection_host.String, acc.Fax_email_connection_username.String)
 
 	pdf := gofpdf.New("P", "pt", "A4", "")
 	pdf.SetAutoPageBreak(true, 40)
