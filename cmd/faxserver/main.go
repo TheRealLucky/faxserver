@@ -2,19 +2,36 @@ package main
 
 import (
 	"../../pkg/config"
+	"../../pkg/loader"
 	log "../../pkg/logger"
+	"../../pkg/tiffer"
 	"database/sql"
+	"fmt"
 )
 
 var Config *config.Configuration
 var Database *sql.DB
-import (
-	"fmt"
-	tiffer "../../pkg/tiffer"
-)
 
 func main() {
-	fmt.Println("Hello World!")
+	log.Info("starting application")
+	Config, err := config.InitConfig("conf.yaml")
+	if err != nil {
+		panic(err)
+	}
+
+	Database, err := config.InitDatabase(Config)
+	if err != nil {
+		panic(err)
+	}
+
+	// testing purposes
+	log.Info("loading default settings")
+	default_settings, err := loader.Load_default_settings(Database)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(default_settings)
+
 	tiffer.Create_folder("x","u")
 	m := make(map[string]string)
 	m["from"]="KundeA"
@@ -25,4 +42,5 @@ func main() {
 		fmt.Println("failed")
 	}
 	fmt.Println(file)
+
 }
