@@ -18,5 +18,5 @@ database:
   host: 217.74.10.212
   port: 5432
   user: postgres
-  password: postgres
+  password: qwer%1234
   dbname: postgres
