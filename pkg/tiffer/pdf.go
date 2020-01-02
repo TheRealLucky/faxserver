@@ -2,9 +2,9 @@ package tiffer
 
 import (
 	"fmt"
+	"github.com/jung-kurt/gofpdf"
 	"github.com/nu7hatch/gouuid"
 	"github.com/pkg/errors"
-	"github.com/jung-kurt/gofpdf"
 	"log"
 	"os/exec"
 	loader "../loader"

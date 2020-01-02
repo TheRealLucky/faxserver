@@ -2,6 +2,7 @@ package main
 
 import (
 	"../../pkg/config"
+	"../../pkg/loader"
 	log "../../pkg/logger"
 	"../../pkg/tiffer"
 	"database/sql"
@@ -22,13 +23,26 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(Database)
-	// testing purposes
-	//default_settings, err := loader.Load_default_settings(Database)
+
+	// testing loader package
+	/*
+	log.Info("loading default settings")
+	default_settings, err := loader.Load_default_settings(Database)
 	if err != nil {
 		panic(err)
 	}
-	//fmt.Println(default_settings)
+	fmt.Println(default_settings)
+	*/
+	/*
+	log.Info("loading account informations")
+	account, err := loader.Get_account_informations(Database)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(account)
+	*/
+	log.Info("getting user uuid")
+	uuid, domain, err := loader.Get_user_uuid(Database, )
 
 	tiffer.Create_folder("x","u")
 	m := make(map[string]string)
