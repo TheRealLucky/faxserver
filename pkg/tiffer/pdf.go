@@ -5,6 +5,8 @@ import (
 	"github.com/nu7hatch/gouuid"
 	"github.com/pkg/errors"
 	"github.com/jung-kurt/gofpdf"
+	"log"
+	"os/exec"
 )
 
 //create pdf from received email content
@@ -92,3 +94,31 @@ func Create_pdf(informations map[string]string, host string, user string) ([]str
 	}
 	return result, nil
 }
+
+
+//merge created pdf with attachments from mail and create a new one
+func Merge_pdf(filenames map[string][]string) (string, error) {
+	command := ""
+	tmppath := ""
+	var extraCmds []string
+	for path, name := range filenames {
+		tmppath = path
+		for i := 0; i < len(name); i++ {
+			command = path + "/" + name[i]
+			extraCmds = append(extraCmds, command)
+		}
+	}
+	uuid, _ := uuid.NewV4()
+	tmp_filename := uuid.String() + ".pdf"
+	tmppath += "/" + tmp_filename
+	extraCmds = append(extraCmds, tmppath)
+	//use pdfunite to merge pdf
+	s, err := exec.Command("pdfunite", extraCmds...).Output()
+	reslt := string(s)
+	log.Println(reslt)
+	if err != nil {
+		return "", errors.Errorf("[merge_pdf] failed to execute pdfunite command: \n%v", err)
+	}
+	return "",nil
+}
+

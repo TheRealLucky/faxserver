@@ -12,5 +12,9 @@ func main() {
 	m["from"]="KundeA"
 	m["to"]="KundeB"
 	m["subject"]="xsx"
-	tiffer.Create_pdf(m,"x","u")
+	file, err := tiffer.Create_pdf(m,"x","u")
+	if err != nil {
+		fmt.Println("failed")
+	}
+	fmt.Println(file)
 }
