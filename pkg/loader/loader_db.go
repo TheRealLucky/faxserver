@@ -33,3 +33,66 @@ func Get_account_informations(db *sql.DB) ([]Account_Informations, error) {
 	}
 	return acc_list, nil
 }
+
+
+func Get_user_uuid(db *sql.DB, domain_uuid string, fax_uuid string) (string, string, error) {
+	query := "select user_uuid, domain_name " +
+		"       from v_fax_users as fu, v_domains as d " +
+		"      where fu.domain_uuid = d.domain_uuid " +
+		"        and fu.fax_uuid = $1 " +
+		"        and fu.domain_uuid = $2"
+
+	res := db.QueryRow(query, domain_uuid, fax_uuid)
+
+	var user_uuid, domain_name string
+	err := res.Scan(&user_uuid, &domain_name)
+	if err != nil {
+		log.Error("failed to scan result set: %v", err)
+		return "", "", err
+	} else {
+		return user_uuid, domain_name, nil
+	}
+}
+
+func Get_fax_address_and_prefix(db *sql.DB, fax_uuid string) (string, string, error) {
+	query := "select fax_email, fax_prefix " +
+		"       from v_fax " +
+		"      where fax_uuid = $1"
+
+	res := db.QueryRow(query, fax_uuid)
+	var fax_email, fax_prefix string
+	err := res.Scan(&fax_email, &fax_prefix)
+	if err != nil {
+		log.Error("failed to scan result set")
+		return "", "", err
+	}
+	return fax_email, fax_prefix, nil
+}
+
+func Get_address_user(db *sql.DB, user_uuid string) (string, error) {
+	query := "select contact_uuid " +
+		"       from v_users " +
+		"      where user_uuid = $1"
+
+	res := db.QueryRow(query, user_uuid)
+	var contact_uuid string
+	err := res.Scan(&contact_uuid)
+	if err != nil {
+		return "", nil
+	}
+	query = "select email_address " +
+		"      from v_contact_emails " +
+		"     where contact_uuid = $1 " +
+		"     order by email_primary desc;"
+	res = db.QueryRow(query, contact_uuid)
+	var email_address string
+	err = res.Scan(&email_address)
+	if err != nil {
+		return "", err
+	}
+	return email_address, nil
+}
+
+
+
+

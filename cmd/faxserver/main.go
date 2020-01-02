@@ -33,12 +33,16 @@ func main() {
 	}
 	fmt.Println(default_settings)
 	*/
+	/*
 	log.Info("loading account informations")
 	account, err := loader.Get_account_informations(Database)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println(account)
+	*/
+	log.Info("getting user uuid")
+	uuid, domain, err := loader.Get_user_uuid(Database, )
 
 	tiffer.Create_folder("x","u")
 	m := make(map[string]string)
