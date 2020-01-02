@@ -1,7 +1,11 @@
 package tiffer
 
 import (
+	"fmt"
+	"github.com/pkg/errors"
+	"log"
 	"os"
+	"os/exec"
 	"time"
 )
 
@@ -20,4 +24,24 @@ func Create_folder(host string, user string) string {
 		os.MkdirAll(path, os.ModePerm)
 	}
 	return path
+}
+
+//create tif file from pdf
+func create_tif(path string) (string, error) {
+	//TODO: -g paramter
+	//a := 8.3 * 204
+	//b := 11.7 * 196
+	tmppath := path[:len(path)-4]
+	tmppath += ".tif"
+	extraCmds := []string{"-sDEVICE=tiffg3", "-r204x196", "-dNOPAUSE",
+		fmt.Sprintf("-sOutputFile=%s", tmppath), fmt.Sprintf("%s", path), "-c quit",
+	}
+	//use ghostscript (gs) to create this tif file
+	s, err := exec.Command("gs", extraCmds...).Output()
+	reslt := string(s)
+	log.Println(reslt)
+	if err != nil {
+		return "", errors.Errorf("[create_tif] failed to execute gs command: \n%v", err)
+	}
+	return tmppath, nil
 }

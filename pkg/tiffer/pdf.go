@@ -96,6 +96,7 @@ func Create_pdf(informations map[string]string, host string, user string) ([]str
 }
 
 //INFO: function is tested on linux
+//need to be root -> execute with sudo
 //merge created pdf with attachments from mail and create a new one
 //key in map is used as paht and contains all associated files in this path as value
 func Merge_pdf(filenames map[string][]string) (string, error) {
@@ -120,6 +121,11 @@ func Merge_pdf(filenames map[string][]string) (string, error) {
 	if err != nil {
 		return "", errors.Errorf("[merge_pdf] failed to execute pdfunite command: \n%v", err)
 	}
-	return "",nil
+	tif_file, err := create_tif(tmppath)
+	if err != nil {
+		return "", errors.Errorf("[merge_pdf] failed to create tif file from created pdf: \n%v", err)
+	}
+	return tif_file, nil
+
 }
 
