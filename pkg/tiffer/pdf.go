@@ -122,7 +122,7 @@ func Merge_pdf(filenames map[string][]string) (string, error) {
 	if err != nil {
 		return "", errors.Errorf("[merge_pdf] failed to execute pdfunite command: \n%v", err)
 	}
-	tif_file, err := create_tif(tmppath)
+	tif_file, err := Create_tif(tmppath)
 	if err != nil {
 		return "", errors.Errorf("[merge_pdf] failed to create tif file from created pdf: \n%v", err)
 	}
