@@ -14,7 +14,11 @@ func Get_account_informations(db *sql.DB) ([]Account_Informations, error) {
 		"       from v_fax " +
 		"      where fax_email_connection_host != '' " +
 		"        and fax_email_connection_host is not null " +
-		"        and fax_email_connection_type = 'imap'"
+		"        and fax_email_connection_type = 'imap'" +
+		"        and fax_uuid = '14866d3d-18a6-4acc-8934-0559990cfe9d'"+
+		"        and domain_uuid = 'f9ce970b-f097-4b44-b319-4e336b7b7d21'"+
+		"        and dialplan_uuid = '2b214435-4347-48d2-8696-1186c3cbdb32'"
+	//TODO: delete last 3 ands, because they are only for testing purposes
 
 	res, err := db.Query(query)
 	if err != nil {

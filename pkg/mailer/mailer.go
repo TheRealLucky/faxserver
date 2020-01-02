@@ -106,11 +106,11 @@ func Get_emails(acc loader.Account_Informations) (string, []string, error) {
 
 	for msg := range messages {
 		if msg == nil {
-			Log.Fatal("[get_emails] Server didn't returned message")
+			Log.Fatal("[get_emails] Server didn't return message")
 		}
 		r := msg.GetBody(&section)
 		if r == nil {
-			Log.Fatal("[get_emails] Server didn't returned message body")
+			Log.Fatal("[get_emails] Server didn't return message body")
 		}
 
 		//set charset var from the go-message package to support more charsets
@@ -184,6 +184,7 @@ func Get_emails(acc loader.Account_Informations) (string, []string, error) {
 				path := tiffer.Create_folder(acc.Fax_email_connection_host.String, acc.Fax_email_connection_username.String)
 				tmp_path := path + "/" + filename
 
+				//TODO: tif/tiff too?
 				if strings.ToLower(filename[len(filename)-4:]) == ".pdf" {
 					//copy attachment to folder
 					out, err := os.Create(tmp_path)
