@@ -1,7 +1,16 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	tiffer "../../pkg/tiffer"
+)
 
 func main() {
 	fmt.Println("Hello World!")
+	tiffer.Create_folder("x","u")
+	m := make(map[string]string)
+	m["from"]="KundeA"
+	m["to"]="KundeB"
+	m["subject"]="xsx"
+	tiffer.Create_pdf(m,"x","u")
 }
