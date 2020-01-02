@@ -8,22 +8,21 @@ import (
 
 var Config *config.Configuration
 var Database *sql.DB
+import (
+	"fmt"
+	tiffer "../../pkg/tiffer"
+)
 
 func main() {
-	log.Info("starting application")
-	Config, err := config.InitConfig("conf.yaml")
+	fmt.Println("Hello World!")
+	tiffer.Create_folder("x","u")
+	m := make(map[string]string)
+	m["from"]="KundeA"
+	m["to"]="KundeB"
+	m["subject"]="xsx"
+	file, err := tiffer.Create_pdf(m,"x","u")
 	if err != nil {
-		panic(err)
+		fmt.Println("failed")
 	}
-
-	Database, err := config.InitDatabase(Config)
-	if err != nil {
-		panic(err)
-	}
-
-	// testing purposes
-	err = Database.Ping()
-	if err != nil {
-		panic(err)
-	}
+	fmt.Println(file)
 }
