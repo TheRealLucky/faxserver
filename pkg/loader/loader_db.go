@@ -110,8 +110,25 @@ func Get_all_fax_extensions(db *sql.DB, domain_uuid string, fax_uuid string) (*F
 		return nil, err
 	}
 	return &fax_info, nil
-
 }
+
+func Get_assigned_fax_extensions(db *sql.DB, domain_uuid string, fax_uuid string, user_uuid string) (*Fax_Info, error) {
+	query := "select f.fax_uuid, f.fax_extension, f.fax_caller_id_name, f.fax_caller_id_number, f.accountcode, f.fax_send_greeting " +
+		"       from v_fax as f, v_fax_users as u " +
+		"      where f.fax_uuid = u.fax_uuid " +
+		"        and f.domain_uuid = $1 " +
+		"        and f.fax_uuid = $2 " +
+		"        and u.user_uuid = $3"
+	res := db.QueryRow(query, domain_uuid, fax_uuid, user_uuid)
+	var fax_info Fax_Info
+	err := res.Scan(&fax_info.Fax_uuid, &fax_info.Fax_extension, &fax_info.Fax_caller_id_name, &fax_info.Fax_caller_id_number, &fax_info.Accountcode, &fax_info.Fax_send_greetings)
+	if err != nil {
+		log.Error("failed to scan result set: %v", err)
+		return nil, err
+	}
+	return &fax_info, nil
+}
+
 
 
 
