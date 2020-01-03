@@ -41,6 +41,11 @@ func InitConfig(filename string) (*Configuration, error) {
 		return nil, err
 	}
 
+	if config.Interval < 120 {
+		log.Fatal("interval has to be bigger than 120 seconds. ")
+		return nil, errors.Errorf("interval has to be bigger than 120 seconds. interval is: %v", config.Interval)
+	}
+
 	log.Info("configuration initialized, configured values are:")
 	log.Info("--- config.yaml ---")
 	log.Info("interval: %v", config.Interval)
