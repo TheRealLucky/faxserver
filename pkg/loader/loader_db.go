@@ -97,6 +97,21 @@ func Get_address_user(db *sql.DB, user_uuid string) (string, error) {
 	return email_address, nil
 }
 
+func Get_all_fax_extensions(db *sql.DB, domain_uuid string, fax_uuid string) (*Fax_Info, error) {
+	query := "select fax_uuid, fax_extension, fax_caller_id_name, fax_caller_id_number, accountcode, fax_send_greeting " +
+		"       from v_fax where domain_uuid = $1 " +
+		"        and fax_uuid = $2"
+	res := db.QueryRow(query, domain_uuid, fax_uuid)
+
+	var fax_info Fax_Info
+	err := res.Scan(&fax_info.Fax_uuid, &fax_info.Fax_extension, &fax_info.Fax_caller_id_name, &fax_info.Fax_caller_id_number, &fax_info.Accountcode, &fax_info.Fax_send_greetings)
+	if err != nil {
+		log.Error("failed to scan result set: %v", err)
+		return nil, err
+	}
+	return &fax_info, nil
+
+}
 
 
 
