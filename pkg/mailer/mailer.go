@@ -147,6 +147,7 @@ func Get_emails(acc loader.Account_Informations) (string, []string, error) {
 			informations_to_fax["to"] = to[0].Address
 			log.Println("To:", to)
 		}
+		//TODO: check subject prefix (col in database)
 		if subject, err := header.Subject(); err == nil {
 			log.Println("Subject:", subject)
 			//hope this is right way how to get fax_numbers

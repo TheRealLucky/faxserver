@@ -21,6 +21,7 @@ func Send_fax(db *sql.DB, acc_info loader.Account_Informations, domain_settings 
 		log.Error("failed to get user uuid: %v", err)
 		return err
 	}*/
+	//TODO: delete this (just for test purpose)
 	user_uuid := "b07b03b3-ed70-42a3-b59f-963be60cb1cd"
 	domain_name := "demo.pbx.ucom.cloud"
 
