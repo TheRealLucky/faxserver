@@ -4,6 +4,8 @@ import (
 	"../loader"
 	log "../logger"
 	"database/sql"
+	"fmt"
+	"github.com/nu7hatch/gouuid"
 	"github.com/pkg/errors"
 )
 
@@ -20,9 +22,10 @@ func send_fax(db *sql.DB, acc_info loader.Account_Informations, domain_settings 
 	}
 
 	//TODO: if superadmin or admin -> php code
-	fax_info, err := get_assigned_fax_extensions(Database, acc_info.Domain_uuid.String, acc_info.Fax_uuid, user_uuid)
+	fax_info, err := loader.Get_assigned_fax_extensions(db, acc_info.Domain_uuid.String, acc_info.Fax_uuid, user_uuid)
 	if err != nil {
-		return errors.Errorf("[send_fax] failed to get assigned fax extensions \n%v", err)
+		log.Error("failed to get assigned fax extensions from database")
+		return err
 	}
 
 	if domain_settings["fax"]["smtp_from"]["var"] != nil {
@@ -31,14 +34,15 @@ func send_fax(db *sql.DB, acc_info loader.Account_Informations, domain_settings 
 		mailfrom_address = domain_settings["email"]["smtp_from"]["var"][0]
 	}
 
-	mailto_address_fax, fax_prefix, err = get_fax_address_and_prefix(Database, acc_info.Fax_uuid)
+	mailto_address_fax, fax_prefix, err = loader.Get_fax_address_and_prefix(db, acc_info.Fax_uuid)
 	if err != nil {
-		return errors.Errorf("[send_fax] failed to get mailto_address_fax and fax_prefix from database \n%v", err)
+		log.Error("failed to get mailto_address and fax_prefix from database")
+		return err
 	}
 
-	mailto_address_user, err = get_address_user(Database, user_uuid)
+	mailto_address_user, err = loader.Get_address_user(db, user_uuid)
 	if err != nil {
-		return errors.Errorf("[send_fax] failed to get mailto_address_user from database \n%v", err)
+		log.Error("failed to get mailto_address_user from database")
 	}
 
 	if mailto_address_fax != "" && mailto_address_user != mailto_address_fax {
@@ -51,12 +55,16 @@ func send_fax(db *sql.DB, acc_info loader.Account_Informations, domain_settings 
 	fmt.Println(mailfrom_address)
 
 	//create dial string
-	dial_string := fmt.Sprintf("for_fax=1, accountcode=%s, ship_h_X-accountcode=%s, domain_uuid=%s, domain_name=%s, origination_caller_id_name=%s, origination_caller_id_number=%s, fax_ident=%s, fax_header=%s, fax_file=%s,", fax_info.Accountcode, fax_info.Accountcode, acc_info.Domain_uuid.String, domain_name, fax_info.Fax_caller_id_name, fax_info.Fax_caller_id_number, fax_info.Fax_caller_id_number, fax_info.Fax_caller_id_name, tif_file)
+	dial_string := fmt.Sprintf("for_fax=1, accountcode=%s, ship_h_X-accountcode=%s, domain_uuid=%s, " +
+		"domain_name=%s, origination_caller_id_name=%s, origination_caller_id_number=%s, fax_ident=%s, " +
+		"fax_header=%s, fax_file=%s,", fax_info.Accountcode, fax_info.Accountcode, acc_info.Domain_uuid.String,
+		domain_name, fax_info.Fax_caller_id_name, fax_info.Fax_caller_id_number, fax_info.Fax_caller_id_number,
+		fax_info.Fax_caller_id_name, tif_file)
 
 	for _, fax_number := range fax_numbers {
 		//TODO: fax_split_dtmf
 		fax_dtmf := ""
-		routearray, err := outbound_route_to_bridge(Database, acc_info.Domain_uuid.String, fax_number)
+		routearray, err := OutboundRouteToBridge(db, acc_info.Domain_uuid.String, fax_number)
 		if err != nil {
 			return errors.Errorf("[send_fax] failed to call outbound route to bridge")
 		}
@@ -74,9 +82,25 @@ func send_fax(db *sql.DB, acc_info loader.Account_Informations, domain_settings 
 
 		}
 		wav_file := ""
-		fax_enqueue(Database, acc_info.Fax_uuid, tif_file, wav_file, mailto_address, fax_uri, fax_dtmf, dial_string)
+		err = faxEnqueue(db, acc_info.Fax_uuid, tif_file, wav_file, mailto_address, fax_uri, fax_dtmf, dial_string)
+		if err != nil {
+			log.Error("failed to enqueue fax")
+			return err
+		}
 	}
 	return nil
+}
+
+func faxEnqueue(db *sql.DB, faxUUID, tif, wav, mailToAddress, faxURI, faxDTMF, dialString string) error {
+	taskUUID, _ := uuid.NewV4()
+
+	dialString = dialString + "fax_task_uuid='" + taskUUID.String() + "',"
+
+	err := insertIntoFaxQueue(db, taskUUID.String(), faxUUID, tif, wav, faxURI, dialString, faxDTMF, mailToAddress)
+	if err != nil {
+		log.Error("failed to insert task into database")
+		return err
+	}
 
 	return nil
 }
