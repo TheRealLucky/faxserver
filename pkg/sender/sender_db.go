@@ -19,5 +19,6 @@ func insertIntoFaxQueue(db *sql.DB, taskUUID, faxUUID, faxFile, wavFile, faxURI,
 		log.Error("failed to perform insert statement")
 		return err
 	}
+	return nil
 
 }
