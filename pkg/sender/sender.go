@@ -15,7 +15,7 @@ func send_fax(db *sql.DB, acc_info loader.Account_Informations, domain_settings 
 	mailfrom_address := ""
 	var err error
 
-	user_uuid, domain_name, err := loader.Get_user_uuid(db, acc_info.Domain_uuid.String, acc_info.Fax_uuid)
+	user_uuid, domain_name, err := loader.GetUserUuid(db, acc_info.Domain_uuid.String, acc_info.Fax_uuid)
 	if err != nil {
 		log.Error("failed to get user uuid: %v", err)
 		return err
@@ -34,7 +34,7 @@ func send_fax(db *sql.DB, acc_info loader.Account_Informations, domain_settings 
 		mailfrom_address = domain_settings["email"]["smtp_from"]["var"][0]
 	}
 
-	mailto_address_fax, fax_prefix, err = loader.Get_fax_address_and_prefix(db, acc_info.Fax_uuid)
+	mailto_address_fax, fax_prefix, err = loader.GetFaxAddressAndPrefix(db, acc_info.Fax_uuid)
 	if err != nil {
 		log.Error("failed to get mailto_address and fax_prefix from database")
 		return err

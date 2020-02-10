@@ -39,26 +39,26 @@ func Get_account_informations(db *sql.DB) ([]Account_Informations, error) {
 }
 
 
-func Get_user_uuid(db *sql.DB, domain_uuid string, fax_uuid string) (string, string, error) {
+func GetUserUuid(db *sql.DB, domainUuid string, faxUuid string) (string, string, error) {
 	query := "select user_uuid, domain_name " +
 		"       from v_fax_users as fu, v_domains as d " +
 		"      where fu.domain_uuid = d.domain_uuid " +
 		"        and fu.fax_uuid = $1 " +
 		"        and fu.domain_uuid = $2"
 
-	res := db.QueryRow(query, domain_uuid, fax_uuid)
+	res := db.QueryRow(query, domainUuid, faxUuid)
 
-	var user_uuid, domain_name string
-	err := res.Scan(&user_uuid, &domain_name)
+	var userUuid, domainName string
+	err := res.Scan(&userUuid, &domainName)
 	if err != nil {
 		log.Error("failed to scan result set: %v", err)
 		return "", "", err
 	} else {
-		return user_uuid, domain_name, nil
+		return userUuid, domainName, nil
 	}
 }
 
-func Get_fax_address_and_prefix(db *sql.DB, fax_uuid string) (string, string, error) {
+func GetFaxAddressAndPrefix(db *sql.DB, fax_uuid string) (string, string, error) {
 	query := "select fax_email, fax_prefix " +
 		"       from v_fax " +
 		"      where fax_uuid = $1"
