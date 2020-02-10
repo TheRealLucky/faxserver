@@ -1,7 +1,8 @@
 package loader
 
 import (
-	log "../logger"
+	//log "../logger"
+	log "github.com/TheRealLucky/faxserver/tree/development/pkg/logger"
 	"database/sql"
 	"github.com/pkg/errors"
 	"gopkg.in/guregu/null.v3"
