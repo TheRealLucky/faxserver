@@ -46,7 +46,7 @@ func Load_default_settings(db *sql.DB) (map[string]map[string]map[string][]strin
 	log.Info("executing query on database")
 	res, err := db.Query(query)
 	if err != nil {
-		return nil, errors.Errorf("failed to execute query: ", err)
+		return nil, errors.Errorf("failed to execute query: %v", err)
 	}
 
 	result := make(map[string]map[string]map[string][]string)
