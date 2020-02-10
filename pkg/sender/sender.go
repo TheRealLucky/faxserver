@@ -9,7 +9,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func send_fax(db *sql.DB, acc_info loader.Account_Informations, domain_settings map[string]map[string]map[string][]string, tif_file string, fax_numbers []string) error {
+func Send_fax(db *sql.DB, acc_info loader.Account_Informations, domain_settings map[string]map[string]map[string][]string, tif_file string, fax_numbers []string) error {
 	log.Info("sending fax")
 	var mailto_address_user, mailto_address_fax, fax_prefix, mailto_address string
 	mailfrom_address := ""
@@ -19,7 +19,10 @@ func send_fax(db *sql.DB, acc_info loader.Account_Informations, domain_settings 
 	if err != nil {
 		log.Error("failed to get user uuid: %v", err)
 		return err
-	}
+	}*/
+	//TODO: delete this (just for test purpose)
+	user_uuid := "b07b03b3-ed70-42a3-b59f-963be60cb1cd"
+	domain_name := "demo.pbx.ucom.cloud"
 
 	//TODO: if superadmin or admin -> php code
 	fax_info, err := loader.Get_assigned_fax_extensions(db, acc_info.Domain_uuid.String, acc_info.Fax_uuid, user_uuid)
@@ -57,9 +60,11 @@ func send_fax(db *sql.DB, acc_info loader.Account_Informations, domain_settings 
 	//create dial string
 	dial_string := fmt.Sprintf("for_fax=1, accountcode=%s, ship_h_X-accountcode=%s, domain_uuid=%s, " +
 		"domain_name=%s, origination_caller_id_name=%s, origination_caller_id_number=%s, fax_ident=%s, " +
-		"fax_header=%s, fax_file=%s,", fax_info.Accountcode, fax_info.Accountcode, acc_info.Domain_uuid.String,
-		domain_name, fax_info.Fax_caller_id_name, fax_info.Fax_caller_id_number, fax_info.Fax_caller_id_number,
-		fax_info.Fax_caller_id_name, tif_file)
+		"fax_header=%s, fax_file=%s,", fax_info.Accountcode.String, fax_info.Accountcode.String, acc_info.Domain_uuid.String,
+		domain_name, fax_info.Fax_caller_id_name.String, fax_info.Fax_caller_id_number.String, fax_info.Fax_caller_id_number.String,
+		fax_info.Fax_caller_id_name.String, tif_file)
+
+	log.Info("Dial string: %s", dial_string)
 
 	for _, fax_number := range fax_numbers {
 		//TODO: fax_split_dtmf

@@ -30,11 +30,11 @@ type Account_Informations struct {
 
 type Fax_Info struct {
 	Fax_uuid             string
-	Fax_extension        string
-	Fax_caller_id_name   string
-	Fax_caller_id_number string
-	Accountcode          string
-	Fax_send_greetings   string
+	Fax_extension        null.String
+	Fax_caller_id_name   null.String
+	Fax_caller_id_number null.String
+	Accountcode          null.String
+	Fax_send_greetings   null.String
 }
 
 

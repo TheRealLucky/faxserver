@@ -3,6 +3,7 @@ package sender
 import (
 	log "../logger"
 	"database/sql"
+	"fmt"
 	"regexp"
 	"strings"
 )
@@ -38,13 +39,14 @@ func OutboundRouteToBridge(db *sql.DB, domainUUID, destinationNumber string) ([]
 			if detail.DetailTag == "condition" && detail.DetailType == "destination_number" {
 				rex := regexp.MustCompile(detail.DetailData)
 				matches := rex.FindAllStringSubmatch(destinationNumber, -1)
-				if match == true {
+				if len(matches) > 0 {
 					regexMatch = true
+					fmt.Println(matches)
 					regexMatches[0] = matches[0][1]
-					regexMatches[1] = matches[1][1]
-					regexMatches[2] = matches[2][1]
-					regexMatches[3] = matches[3][1]
-					regexMatches[4] = matches[4][1]
+					if len(matches) > 1 {regexMatches[1] = matches[1][1]}
+					if len(matches) > 2 {regexMatches[2] = matches[2][1]}
+					if len(matches) > 3 {regexMatches[3] = matches[3][1]}
+					if len(matches) > 4 {regexMatches[4] = matches[4][1]}
 				}else {
 					regexMatch = false
 				}

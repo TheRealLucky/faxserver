@@ -11,6 +11,7 @@ import (
 	uuid "github.com/nu7hatch/gouuid"
 	"golang.org/x/sync/semaphore"
 	"time"
+	sender "../../pkg/sender"
 )
 
 var Config *config.Configuration
@@ -63,7 +64,7 @@ func main() {
 			log.Info("got account informations list")
 		}
 		cnt := 1
-		for _, e := range acc_list {
+		for _, acc_info := range acc_list {
 			if err := sem.Acquire(ctx, 1); err != nil {
 				log.Error("Failed to acquire semaphore: %v", err)
 				break
@@ -73,7 +74,7 @@ func main() {
 				uuid, _ := uuid.NewV4()
 				fmt.Println("starttttt: ", uuid)
 				//load domain_setting and replace it with default_settings
-				domain_settings, err1 := loader.Load_domain_settings(Database, default_settings, e.Domain_uuid.String)
+				domain_settings, err1 := loader.Load_domain_settings(Database, default_settings, acc_info.Domain_uuid.String)
 				//str, _ := json.Marshal(domain_settings)
 				//fmt.Println(string(str))
 				if err1 != nil {
@@ -93,17 +94,18 @@ func main() {
 				//connect to host with user and password
 				//fetch eamils from server
 				//create pdf file and merge these to a tif file
-				tif_file, fax_numbers, err := mailer.Get_emails(e)
+				tif_file, fax_numbers, err := mailer.Get_emails(acc_info)
 				fmt.Println(tif_file)
 				fmt.Println(fax_numbers)
 				if err != nil {
 					log.Error("failed to get mails: %v",err)
 				} else {
-					//err = send_fax(e, domain_settings, tif_file, fax_numbers)
-					//if err != nil {
-					//fmt.Println("send fax error")
-					//Log.Error(err)
-					//}
+				err = sender.Send_fax(Database, acc_info, domain_settings, tif_file, fax_numbers)
+					if err != nil {
+						fmt.Println("send fax error")
+						log.Error("failed to send fax: \n%v", err)
+						panic(err)
+					}
 					fmt.Println("last one")
 
 				}
@@ -125,7 +127,7 @@ func main() {
 		diff := end_time.Sub(start_time)
 		if int(diff.Seconds()) < Config.Interval {
 			sleepy := Config.Interval - int(diff.Seconds())
-			log.Info("sleep for ", sleepy, " seconds")
+			log.Info("sleep for %s seconds", string(sleepy))
 			time.Sleep(time.Duration(sleepy) * time.Second)
 
 		}
