@@ -1,4 +1,4 @@
-module faxserver
+module github.com/TheRealLucky/faxserver
 
 require (
 	github.com/emersion/go-imap v1.0.3
